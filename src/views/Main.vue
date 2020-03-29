@@ -5,10 +5,10 @@
 -->
 
 <template>
-  <div v-if="this.$store.getters.getRole == 'admin'">
+  <div v-if="this.$store.getters.getRole == 'Administrator'">
     <AdminMain />
   </div>
-  <div v-else-if="this.$store.getters.getRole == 'user'">
+  <div v-else-if="this.$store.getters.getRole == 'User'">
     <UserMain />
   </div>
   <div v-else>

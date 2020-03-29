@@ -3,6 +3,17 @@
     <v-card>
       <v-img height="200" contain src="@/assets/logo.png"></v-img>
       <v-card-text>
+        <v-alert
+          transition="scale-transition"
+          dense
+          outlined
+          type="error"
+          v-show="this.$store.getters.authStatus == 'error'"
+        >
+          Wrong
+          <strong>email</strong> or
+          <strong>password</strong>!
+        </v-alert>
         <v-text-field
           v-model="username"
           label="Login"
@@ -40,13 +51,13 @@ export default {
     login: function() {
       if (this.$refs.form.validate()) {
         const { username, password } = this;
-        this.$store.dispatch(AUTH_REQUEST, { username, password }).then(() => {
-          this.$router.push("/");
-        });
+        this.$store
+          .dispatch(AUTH_REQUEST, { username, password })
+          .then(() => this.$router.push("/"));
       }
     },
     exit: function() {
-      this.$store.dispatch(AUTH_LOGOUT).then(remote.getCurrentWindow().close())
+      this.$store.dispatch(AUTH_LOGOUT).then(remote.getCurrentWindow().close());
     }
   },
   created: function() {

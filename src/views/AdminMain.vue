@@ -4,7 +4,7 @@
       <v-text-field
         v-model="search"
         append-icon="mdi-magnify"
-        label="Search"
+        label="Search by office"
         single-line
         hide-details
       ></v-text-field>
@@ -81,14 +81,21 @@ export default {
   methods: {
     createUser: function(user) {
       this.users.push(user);
-      this.dialogNewUser = false
+      this.dialogNewUser = false;
     },
-    updateUser: function(user) {
+    updateUser: function(user) {      
       this.$set(this.selected, 0, user);
+      this.selected = [];
       this.dialogEditRole = false;
     },
     swithActive: function() {
-      this.selected.forEach(e => (e.isActive = !e.isActive));
+      this.selected.forEach(user => {
+        user.isActive = !user.isActive;
+        apiCall({
+          url: "update-user",
+          data: user
+        }).then(resp => user = resp.user);
+      });
     }
   },
   created: function() {
@@ -98,7 +105,7 @@ export default {
         click: () =>
           this.$store
             .dispatch(AUTH_LOGOUT)
-            .then(remote.getCurrentWindow().close())
+            .then(this.$router.push("/login"))
       },
       { label: "Add user", click: () => (this.dialogNewUser = true) }
     ];
@@ -106,7 +113,7 @@ export default {
     remote.Menu.setApplicationMenu(menu);
   },
   mounted: function() {
-    apiCall({ url: "get-user-list", method: "POST" }).then(
+    apiCall({ url: "get-user-list"}).then(
       resp => (this.users = resp.users)
     );
   }

@@ -22,7 +22,7 @@ const actions = {
   [AUTH_REQUEST]: ({ commit, dispatch }, user) => {
     return new Promise((resolve, reject) => {
       commit(AUTH_REQUEST);
-      apiCall({ url: "auth", data: user, method: "POST" })
+      apiCall({ url: "auth", data: user })
         .then(resp => {
           localStorage.setItem("user-token", resp.token);
           commit(AUTH_SUCCESS, resp);
@@ -37,13 +37,10 @@ const actions = {
     });
   },
   [AUTH_LOGOUT]: ({ commit }) => {
-    return new Promise(resolve => {
-      commit(AUTH_LOGOUT);
+    return new Promise(() => {          
+      apiCall({ url: "exit" });      
       localStorage.removeItem("user-token"); 
-      apiCall({ url: "exit", method: "POST" })
-        .then(() => {
-          resolve();
-        });
+      commit(AUTH_LOGOUT);  
     });
   }
 };

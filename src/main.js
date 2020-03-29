@@ -6,6 +6,8 @@ import vuetify from './plugins/vuetify';
 
 Vue.config.productionTip = false
 
+localStorage.removeItem("user-token");
+
 new Vue({
   router,
   store,

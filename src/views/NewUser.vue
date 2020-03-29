@@ -6,7 +6,14 @@
           <v-text-field v-model="email" label="Email address" :rules="ruleRequired" dense outlined></v-text-field>
           <v-text-field v-model="firstName" label="First name" :rules="ruleRequired" dense outlined></v-text-field>
           <v-text-field v-model="lastName" label="Last name" :rules="ruleRequired" dense outlined></v-text-field>
-          <v-text-field v-model="office" label="Office" :rules="ruleRequired" dense outlined></v-text-field>
+          <v-select
+            v-model="office"
+            label="Office"
+            :items="offices"
+            :rules="ruleRequired"
+            dense
+            outlined
+          ></v-select>
           <v-menu
             ref="menu"
             v-model="menu"
@@ -74,6 +81,7 @@ export default {
     password: "",
 
     menu: false,
+    offices: [],
     showPass: false,
     ruleRequired: [v => !!v || "Required field!"]
   }),
@@ -90,7 +98,6 @@ export default {
       if (this.$refs.form.validate()) {
         apiCall({
           url: "create-user",
-          method: "POST",
           data: {
             email: this.email,
             firstName: this.firstName,
@@ -106,6 +113,11 @@ export default {
       //TODO
       this.$emit("dialogCancel");
     }
+  },
+  created: function() {
+    apiCall({
+      url: "get-offices"      
+    }).then(resp => this.offices = resp.offices);
   }
 };
 </script>

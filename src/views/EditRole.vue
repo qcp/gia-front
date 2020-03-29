@@ -31,7 +31,7 @@
             dense
             outlined
           ></v-text-field>
-          <v-select v-model="user.role" label="Role" :items="items" :rules="ruleRequired" dense outlined></v-select>
+          <v-select v-model="user.role" label="Role" :items="roles" :rules="ruleRequired" dense outlined></v-select>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -53,7 +53,7 @@ export default {
     user: Object
   },
   data: () => ({
-    items: ["user", "admin"],
+    roles: [],
     ruleRequired: [v => !!v || "Required field!"]
   }),
   methods: {
@@ -61,7 +61,6 @@ export default {
       if (this.$refs.form.validate()) {
         apiCall({
           url: "update-user",
-          method: "POST",
           data: this.user
         }).then(resp => this.$emit("dialogSave", resp.user));
       }
@@ -69,6 +68,11 @@ export default {
     cancelUser: function() {
       this.$emit("dialogCancel");
     }
+  },
+  created: function() {
+    apiCall({
+      url: "get-roles"      
+    }).then(resp => this.roles = resp.roles);
   }
 };
 </script>

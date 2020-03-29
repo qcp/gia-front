@@ -20,16 +20,21 @@
           </thead>
           <tbody>
             <tr v-for="item in tracking" :key="item.name" :class="item.isCrash ? 'error' : ''">
-              <td>{{ item.loginTime.toLocaleTimeString() }}</td>
-              <td>{{ item.loginTime.toLocaleTimeString('en-GB') }}</td>
-              <td>{{ item.logoutTime.toLocaleTimeString('en-GB') }}</td>
-              <td>{{ timePrettyDiff(item.logoutTime - item.loginTime) }}</td>
+              <td>{{ new Date(item.loginTime).toLocaleDateString() }}</td>
+              <td>{{ new Date(item.loginTime).toLocaleTimeString('en-GB') }}</td>
+              <td>{{ item.logoutTime ? new Date(item.logoutTime).toLocaleTimeString('en-GB') : '...' }}</td>
+              <td>{{ item.logoutTime ? timePrettyDiff(new Date(item.logoutTime) - new Date(item.loginTime)) :'...' }}</td>
               <td>{{ item.reasonText }}</td>
             </tr>
           </tbody>
         </template>
       </v-simple-table>
-      <NoLogout :isShow="dialog" @dialogConfirm="noLogoutConfirm" />
+      <NoLogout
+        :isShow="dialog"
+        :lastLoginId="lastLoginId"
+        :lastLoginTime="lastLoginTime"
+        @dialogConfirm="noLogoutConfirm"
+      />
     </v-card>
   </div>
   <div v-else>
@@ -51,19 +56,33 @@ export default {
   },
   data: () => ({
     dialog: false,
+    lastLoginTime: "",
+    lastLoginId: 0,
     tracking: []
   }),
   computed: {
     allSpendTime: function() {
-      return this.tracking.reduce((a, c) => a + c.logoutTime.getTime() - c.loginTime.getTime(), 0);
+      return this.tracking
+        ? this.tracking.reduce(
+            (a, c) =>
+              c.logoutTime
+                ? a +
+                  new Date(c.logoutTime).getTime() -
+                  new Date(c.loginTime).getTime()
+                : a,
+            0
+          )
+        : 0;
     },
     allCrashes: function() {
-      return this.tracking.reduce((a, c) => a + c.isCrash, 0);
+      return this.tracking
+        ? this.tracking.reduce((a, c) => a + c.isCrash, 0)
+        : "...";
     }
   },
   methods: {
     noLogoutConfirm: function() {
-      apiCall({ url: "get-user-tracking", method: "POST" }).then(
+      apiCall({ url: "get-user-tracking" }).then(
         resp => (this.tracking = resp.tracking)
       );
       this.dialog = false;
@@ -88,15 +107,26 @@ export default {
         click: () =>
           this.$store
             .dispatch(AUTH_LOGOUT)
-            .then(remote.getCurrentWindow().close())
+            .then(this.$router.push("/login"))
+      },
+      {
+        label: "**Perform error**",
+        click: () =>
+          localStorage.removeItem("user-token")
       }
     ];
     const menu = remote.Menu.buildFromTemplate(template);
     remote.Menu.setApplicationMenu(menu);
   },
   mounted: function() {
-    if(!(this.dialog = this.$store.getters.getProfile.isLastLogoutError))
-      this.noLogoutConfirm();
+    apiCall({ url: "get-user-tracking" }).then(resp => {
+      this.tracking = resp.tracking;
+      const lastLogin = resp.tracking[resp.tracking.length - 1];
+      if ((this.dialog = lastLogin.isCrash && !lastLogin.reasonText)) {
+        this.lastLoginTime = lastLogin.loginTime;
+        this.lastLoginId = lastLogin.id;
+      }
+    });
   }
 };
 </script>

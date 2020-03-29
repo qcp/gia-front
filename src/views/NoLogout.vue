@@ -5,7 +5,7 @@
         <v-card-text>
           <p
             class="mb-0"
-          >No logout detected for you last login on {{logOutDate.toLocaleString('en-GB')}}</p>
+          >No logout detected for you last login on {{lastLoginTime ? new Date(lastLoginTime).toLocaleString('en-GB') : '...'}}</p>
         </v-card-text>
         <v-card-text class="py-0">
           <v-textarea
@@ -39,10 +39,11 @@ import apiCall from "@/utils/api";
 
 export default {
   props: {
-    isShow: Boolean
+    isShow: Boolean,
+    lastLoginId: Number,
+    lastLoginTime: String
   },
   data: () => ({
-    logOutDate: new Date(),
     reasonText: "",
     reasonTag: ""
   }),
@@ -51,8 +52,11 @@ export default {
       if (this.$refs.form.validate()) {
         apiCall({
           url: "save-no-logout-reason",
-          method: "POST",
-          data: this          
+          data: {
+            id: this.lastLoginId,
+            reasonTag: this.reasonTag,
+            reasonText: this.reasonText
+          }
         }).then(resp => this.$emit("dialogConfirm", resp));
       }
     }
