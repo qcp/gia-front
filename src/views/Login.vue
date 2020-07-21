@@ -1,6 +1,6 @@
 <template>
   <v-form ref="form">
-    <v-card>
+    <v-card max-width="600px" class="mx-auto">
       <v-img height="200" contain src="@/assets/logo.png"></v-img>
       <v-card-text>
         <v-alert
@@ -8,11 +8,10 @@
           dense
           outlined
           type="error"
-          v-show="this.$store.getters.authStatus == 'error'"
+          v-model="alert.show"
+          dismissible
         >
-          Wrong
-          <strong>email</strong> or
-          <strong>password</strong>!
+          {{alert.text}}
         </v-alert>
         <v-text-field
           v-model="username"
@@ -23,6 +22,7 @@
         <v-text-field
           v-model="password"
           label="Password"
+          type="password"
           :rules="[v => !!v || 'Password requred!']"
           outlined
         ></v-text-field>
@@ -44,6 +44,10 @@ import { remote } from "electron";
 
 export default {
   data: () => ({
+    alert: {
+      show: false,
+      text: ""
+    },
     username: "",
     password: ""
   }),
@@ -53,7 +57,19 @@ export default {
         const { username, password } = this;
         this.$store
           .dispatch(AUTH_REQUEST, { username, password })
-          .then(() => this.$router.push("/"));
+          .then(() => {
+            this.$router.push("/");
+            this.alert = {
+              show: false,
+              text: ""
+            };
+          })
+          .catch(err => {
+            this.alert = {
+              show: true,
+              text: err.errorText
+            };
+          });
       }
     },
     exit: function() {

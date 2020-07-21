@@ -105,14 +105,16 @@ export default {
       {
         label: "Exit",
         click: () =>
-          this.$store
-            .dispatch(AUTH_LOGOUT)
-            .then(this.$router.push("/login"))
+          this.$store.dispatch(AUTH_LOGOUT).then(this.$router.push("/login"))
       },
       {
         label: "**Perform error**",
-        click: () =>
-          localStorage.removeItem("user-token")
+        click: () => {
+          localStorage.removeItem("user-token");
+          this.$store
+            .dispatch(AUTH_LOGOUT)
+            .then(remote.getCurrentWindow().close());
+        }
       }
     ];
     const menu = remote.Menu.buildFromTemplate(template);
@@ -121,10 +123,12 @@ export default {
   mounted: function() {
     apiCall({ url: "get-user-tracking" }).then(resp => {
       this.tracking = resp.tracking;
-      const lastLogin = resp.tracking[resp.tracking.length - 1];
-      if ((this.dialog = lastLogin.isCrash && !lastLogin.reasonText)) {
-        this.lastLoginTime = lastLogin.loginTime;
-        this.lastLoginId = lastLogin.id;
+      if (resp.tracking) {
+        const lastLogin = resp.tracking[resp.tracking.length - 1];
+        if ((this.dialog = lastLogin.isCrash && !lastLogin.reasonText)) {
+          this.lastLoginTime = lastLogin.loginTime;
+          this.lastLoginId = lastLogin.id;
+        }
       }
     });
   }

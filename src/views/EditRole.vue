@@ -1,7 +1,8 @@
 <template>
   <v-dialog v-model="isShow" persistent max-width="800px">
     <v-form ref="form">
-      <v-card class="py-4">
+      <v-card class="pb-4">
+        <v-card-title>Edit user role</v-card-title>
         <v-card-text>
           <v-text-field
             v-model="user.email"
@@ -9,6 +10,7 @@
             readonly
             dense
             outlined
+            prepend-icon="mdi-eye-outline"
           ></v-text-field>
           <v-text-field
             v-model="user.firstName"
@@ -16,6 +18,7 @@
             readonly
             dense
             outlined
+            prepend-icon="mdi-eye-outline"
           ></v-text-field>
           <v-text-field
             v-model="user.lastName"
@@ -23,6 +26,7 @@
             readonly
             dense
             outlined
+            prepend-icon="mdi-eye-outline"
           ></v-text-field>
           <v-text-field
             v-model="user.office"
@@ -30,8 +34,9 @@
             readonly
             dense
             outlined
+            prepend-icon="mdi-eye-outline"
           ></v-text-field>
-          <v-select v-model="user.role" label="Role" :items="roles" :rules="ruleRequired" dense outlined></v-select>
+          <v-select v-model="user.role" label="Role" :items="roles" :rules="ruleRequired" dense outlined prepend-icon="mdi-pencil-outline"></v-select>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -65,7 +70,7 @@ export default {
         }).then(resp => this.$emit("dialogSave", resp.user));
       }
     },
-    cancelUser: function() {
+    cancelUser: function() {      
       this.$emit("dialogCancel");
     }
   },

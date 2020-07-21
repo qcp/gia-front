@@ -1,8 +1,8 @@
 <template>
-  <v-app style="background-color: #E1E1E1">
-    <v-content>
+  <v-app style="background-color: #fafafa">
+    <v-main>
       <v-container fill-height>
-        <v-layout wrap align-center>
+        <v-layout wrap align-center justify-center>
           <v-flex>
             <v-dialog :value="!loaded" hide-overlay persistent>
               <v-overlay :value="true">
@@ -18,7 +18,7 @@
           </v-flex>
         </v-layout>
       </v-container>
-    </v-content>
+    </v-main>
   </v-app>
 </template>
 

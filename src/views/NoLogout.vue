@@ -1,7 +1,8 @@
 <template>
   <v-dialog v-model="isShow" persistent max-width="800px">
     <v-form ref="form" @submit.prevent="confirmCrash">
-      <v-card class="py-4">
+      <v-card class="pb-4">
+        <v-card-title>Something went wrong last time, tell as more</v-card-title>
         <v-card-text>
           <p
             class="mb-0"

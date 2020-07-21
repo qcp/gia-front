@@ -17,13 +17,12 @@ protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { secure: tru
 function createWindow() {
   // Create the browser window.
   win = new BrowserWindow({
-    width: 800,
-    height: 600,
-    backgroundColor: '#E1E1E1',
+    backgroundColor: '#fafafa',
     webPreferences: {
       nodeIntegration: true
     }
-  })
+  });
+  win.maximize();
   Menu.setApplicationMenu(null)
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {

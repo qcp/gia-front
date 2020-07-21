@@ -104,7 +104,7 @@
 // };
 
 const apiCall = ({ url, method, data }) =>
-  fetch(`https://gia-mpu.herokuapp.com/${url}`, {
+  fetch(`${process.env.VUE_APP_BACK_ENDPOINT}${url}`, {
     method: method || 'POST',
     headers: {
       'Content-Type': 'application/json;charset=utf-8'
@@ -119,6 +119,6 @@ const apiCall = ({ url, method, data }) =>
     if(res.status == "OK")
       return Promise.resolve(res);
     else
-      return Promise.reject();
+      return Promise.reject(res);
   });
 export default apiCall;

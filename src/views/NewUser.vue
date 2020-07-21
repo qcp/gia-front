@@ -1,7 +1,8 @@
 <template>
   <v-dialog v-model="isShow" persistent max-width="800px">
     <v-form ref="form">
-      <v-card class="py-4">
+      <v-card class="pb-4">
+        <v-card-title>Create new user</v-card-title>
         <v-card-text>
           <v-text-field v-model="email" label="Email address" :rules="ruleRequired" dense outlined></v-text-field>
           <v-text-field v-model="firstName" label="First name" :rules="ruleRequired" dense outlined></v-text-field>
@@ -106,18 +107,21 @@ export default {
             birthday: this.date,
             password: this.password
           }
-        }).then(resp => this.$emit("dialogSave", resp.user));
+        }).then(resp => {
+          this.$refs.form.reset();
+          this.$emit("dialogSave", resp.user);
+        });
       }
     },
     cancelUser: function() {
-      //TODO
+      this.$refs.form.resetValidation();
       this.$emit("dialogCancel");
     }
   },
   created: function() {
     apiCall({
-      url: "get-offices"      
-    }).then(resp => this.offices = resp.offices);
+      url: "get-offices"
+    }).then(resp => (this.offices = resp.offices));
   }
 };
 </script>
